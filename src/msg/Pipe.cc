@@ -1527,6 +1527,11 @@ void Pipe::writer()
 	// associate message with Connection (for benefit of encode_payload)
 	m->set_connection(connection_state.get());
 
+	ldout(msgr->cct,20) << "writer front " << m->get_payload().length()
+			    << " middle " << m->get_payload().length()
+			    << " data " << m->get_payload().length()
+			    << dendl;
+
 	uint64_t features = connection_state->get_features();
 	if (m->empty_payload())
 	  ldout(msgr->cct,20) << "writer encoding " << m->get_seq() << " features " << features
@@ -1537,6 +1542,11 @@ void Pipe::writer()
 
 	// encode and copy out of *m
 	m->encode(features, !msgr->cct->_conf->ms_nocrc);
+
+	ldout(msgr->cct,20) << "writer front " << m->get_payload().length()
+			    << " middle " << m->get_payload().length()
+			    << " data " << m->get_payload().length()
+			    << dendl;
 
 	// prepare everything
 	ceph_msg_header& header = m->get_header();
@@ -1563,6 +1573,11 @@ void Pipe::writer()
 	blist.append(m->get_middle());
 	blist.append(m->get_data());
 
+	ldout(msgr->cct,20) << "writer front " << m->get_payload().length()
+			    << " middle " << m->get_payload().length()
+			    << " data " << m->get_payload().length()
+			    << " blist " << blist.length()
+			    << dendl;
 	pipe_lock.Unlock();
 
         ldout(msgr->cct,20) << "writer sending " << m->get_seq() << " " << m << dendl;
